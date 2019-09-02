@@ -76,9 +76,10 @@ public class MapFragment extends Fragment {
     }
 
     private void initRecycleView() {
-        locationRecycleAdapter = new LocationRecycleAdapter(activity, mMainActivityViewModel.getLocations().getValue());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(layoutManager);
+
+        locationRecycleAdapter = new LocationRecycleAdapter(activity, mMainActivityViewModel.getLocations().getValue());
         recyclerView.setAdapter(locationRecycleAdapter);
 
     }

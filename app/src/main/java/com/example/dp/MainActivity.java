@@ -15,13 +15,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-
-
     MapFragment mapFragment = new MapFragment();
     final StatisticsFragment statisticsFragment = new StatisticsFragment();
     final MoreFragment moreFragment = new MoreFragment();
-    Fragment activeFragment = mapFragment;
     final FragmentManager fragmentManager = getSupportFragmentManager();
+    Fragment activeFragment = mapFragment;
 
     private BottomNavigationView bottomNavigationView;
 
@@ -29,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_bar);
         fragmentManager.beginTransaction().add(R.id.fragment_container, mapFragment, "3").commit();
