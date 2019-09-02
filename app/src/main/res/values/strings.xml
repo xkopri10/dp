@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">dp</string>
+    <string name="statistic">Statistiky</string>
+    <string name="map">Mapa</string>
+    <string name="more">Více</string>
+    <string name="swipe_robot">Potáhni pro komunikaci</string>
 </resources>

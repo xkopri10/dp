@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">dp</string>
+    <string name="map">Map</string>
+    <string name="more">More</string>
+    <string name="statistic">Statistics</string>
+    <string name="swipe_robot">Swipe up for communication</string>
+</resources>
