@@ -3,6 +3,6 @@
     <string name="app_name">dp</string>
     <string name="map">Map</string>
     <string name="more">More</string>
-    <string name="statistic">Statistics</string>
+    <string name="statistic">Dashboard</string>
     <string name="swipe_robot">Swipe up for communication</string>
 </resources>

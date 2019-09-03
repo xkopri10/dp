@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
-public class MainActivityViewModel extends ViewModel {
+public class StatisticFragmentViewModel extends ViewModel {
 
     private MutableLiveData<List<Location>> mLocations;
     private LocationRepository mLocationRepository;
