@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">dp</string>
-    <string name="statistic">Statistiky</string>
+    <string name="statistic">Přehled</string>
     <string name="map">Mapa</string>
     <string name="more">Více</string>
     <string name="swipe_robot">Potáhni pro komunikaci</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

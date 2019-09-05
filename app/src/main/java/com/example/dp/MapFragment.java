@@ -1,31 +1,27 @@
 package com.example.dp;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import android.print.PrinterId;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
-import java.util.List;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private MainActivityViewModel mMainActivityViewModel;
-    private LocationRecycleAdapter locationRecycleAdapter;
-    private RecyclerView recyclerView;
-    private Button button;
-
+    private static final String MAPBUNDLE = "mapbundle";
 
     private MainActivity activity;
+    private MapView mapView;
 
     @Override
     public void onAttach(Context context) {
@@ -38,50 +34,14 @@ public class MapFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-        recyclerView = view.findViewById(R.id.rec);
-        button = view.findViewById(R.id.butt);
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) { mapViewBundle = savedInstanceState.getBundle(MAPBUNDLE); }
 
-        mMainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        mMainActivityViewModel.init();
-        mMainActivityViewModel.getLocations().observe(this, new Observer<List<Location>>() {
-            @Override
-            public void onChanged(@Nullable List<Location> locations) {
-                // for example
-                // update map - map.notifyChanges or something like that
-                // or adapter.setnotify...
-                locationRecycleAdapter.notifyDataSetChanged();
-            }
-        });
-
-        mMainActivityViewModel.getIsUpdating().observe(activity, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean aBoolean) {
-                recyclerView.smoothScrollToPosition(mMainActivityViewModel.getLocations().getValue().size()-1);
-            }
-        });
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMainActivityViewModel.addNewLocation(
-                        new Location("55", "nova lokace ", "bla bla")
-                );
-            }
-        });
-
-        initRecycleView();
-
+        mapView = view.findViewById(R.id.map_view);
+        mapView.onCreate(mapViewBundle);
+        mapView.getMapAsync(this);
 
         return view;
-    }
-
-    private void initRecycleView() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(activity);
-        recyclerView.setLayoutManager(layoutManager);
-
-        locationRecycleAdapter = new LocationRecycleAdapter(activity, mMainActivityViewModel.getLocations().getValue());
-        recyclerView.setAdapter(locationRecycleAdapter);
-
     }
 
     @Override
@@ -89,4 +49,43 @@ public class MapFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
+
+    @Override
+    public void onStart() {
+        mapView.onStart();
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        mapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        mapView.onStop();
+        super.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        mapView.onLowMemory();
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }
