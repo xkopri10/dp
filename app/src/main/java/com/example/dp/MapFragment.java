@@ -1,27 +1,46 @@
 package com.example.dp;
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.print.PrinterId;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private static final String MAPBUNDLE = "mapbundle";
+    private static final String TAG = "MapFragment";
+    private static final String MAP_BUNDLE = "MapBundle";
+    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
+    private static final int MAP_AUTOMATIC_ZOOM = 16;
+    private final LatLng mDefaultLocation = new LatLng(49.195060, 16.606837);
 
     private MainActivity activity;
     private MapView mapView;
+
+    private GoogleMap mMap = null;
+    private Location mLastKnownLocation;
+    private boolean mLocationPermissionGranted;
 
     @Override
     public void onAttach(Context context) {
@@ -35,12 +54,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         Bundle mapViewBundle = null;
-        if (savedInstanceState != null) { mapViewBundle = savedInstanceState.getBundle(MAPBUNDLE); }
+        if (savedInstanceState != null) { mapViewBundle = savedInstanceState.getBundle(MAP_BUNDLE); }
 
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(mapViewBundle);
         mapView.getMapAsync(this);
-
         return view;
     }
 
@@ -51,7 +69,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        askForPermission();
+        setCurrentLocation();
+    }
 
+    private void askForPermission() {
+        if (ContextCompat.checkSelfPermission(activity, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSION);
+        }
+    }
+
+    private void setCurrentLocation() {
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity);
+        try {
+            if (mLocationPermissionGranted) {
+                Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
+                locationResult.addOnCompleteListener(activity, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful()) {
+                            mLastKnownLocation = task.getResult();
+                            mMap.setMyLocationEnabled(true);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()), MAP_AUTOMATIC_ZOOM));
+                        } else {
+                            Log.d("TAG", "Current location is null - app running on default settings");
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, MAP_AUTOMATIC_ZOOM));
+                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                        }
+                    }
+                });
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, ": EXCEPTION" + e.getMessage());
+        }
     }
 
     @Override
