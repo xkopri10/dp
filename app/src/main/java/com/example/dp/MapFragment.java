@@ -7,13 +7,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.print.PrinterId;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class MapFragment extends Fragment {
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
+public class MapFragment extends Fragment implements OnMapReadyCallback {
+
+    private static final String MAPBUNDLE = "mapbundle";
 
     private MainActivity activity;
+    private MapView mapView;
 
     @Override
     public void onAttach(Context context) {
@@ -25,6 +33,14 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null) { mapViewBundle = savedInstanceState.getBundle(MAPBUNDLE); }
+
+        mapView = view.findViewById(R.id.map_view);
+        mapView.onCreate(mapViewBundle);
+        mapView.getMapAsync(this);
+
         return view;
     }
 
@@ -33,4 +49,43 @@ public class MapFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+    }
+
+    @Override
+    public void onStart() {
+        mapView.onStart();
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        mapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        mapView.onStop();
+        super.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        mapView.onLowMemory();
+        super.onLowMemory();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }
